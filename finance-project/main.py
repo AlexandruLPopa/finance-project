@@ -8,6 +8,7 @@ from starlette.responses import JSONResponse
 from api.users import users_router
 from api.assets import assets_router
 from domain.user.factory import InvalidUsername
+from domain.user.repo import UserIDNotFound
 
 logging.basicConfig(
     filename="finance.log",
@@ -28,11 +29,18 @@ app.include_router(users_router)
 app.include_router(assets_router)
 
 
+@app.exception_handler(UserIDNotFound)
+def return_id_not_found(_: Request, e: UserIDNotFound):
+    userid_error = "User ID not found! Error: " + str(e)
+    logging.error(userid_error)
+    return JSONResponse(status_code=404, content=userid_error)
+
+
 @app.exception_handler(InvalidUsername)
 def return_invalid_username(_: Request, e: InvalidUsername):
-    return JSONResponse(
-        status_code=400, content="Username is not valid! Error: " + str(e)
-    )
+    username_error = "Username is not valid! Error: " + str(e)
+    logging.error(username_error)
+    return JSONResponse(status_code=400, content=username_error)
 
 
 @app.on_event("startup")

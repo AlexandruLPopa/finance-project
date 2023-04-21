@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from uuid import UUID
 
-# TODO add the field with description, aprox half
+# DONE add the field with description, aprox half
 
 
 class UserAdd(BaseModel):
@@ -16,14 +16,16 @@ class AssetAdd(BaseModel):
     )
 
 
-class AssetInfoBase(BaseModel):
+class BaseModelOrmTrue(BaseModel):
+    class Config:
+        orm_mode = True
+
+
+class AssetInfoBase(BaseModelOrmTrue):
     ticker: str = Field(description="The stock symbol.")
     name: str = Field(description="The company's full name.")
     country: str = Field(description="The company's headquarters country.")
     sector: str = Field(description="The company's main field of operations.")
-
-    class Config:
-        orm_mode = True
 
 
 class AssetInfoUser(AssetInfoBase):
@@ -33,7 +35,7 @@ class AssetInfoUser(AssetInfoBase):
 class AssetInfoPrice(AssetInfoBase):
     currency: str = Field(description="The symbol for currency.")
     current_price: float = Field(description="The stock's current price.")
-    # TODO homework
+    # DONE homework
     today_low_price: float = Field(
         description="The stock's lowest registered price today."
     )
@@ -54,7 +56,7 @@ class AssetInfoPrice(AssetInfoBase):
     )
 
 
-class UserInfo(BaseModel):
+class UserInfo(BaseModelOrmTrue):
     id: UUID = Field(description="A unique user ID.")
     username: str = Field(
         description="Alphanumeric username between 6 and 20 characters."
@@ -62,6 +64,3 @@ class UserInfo(BaseModel):
     stocks: list[AssetInfoBase] = Field(
         description="A list of stocks associated to the user."
     )
-
-    class Config:
-        orm_mode = True

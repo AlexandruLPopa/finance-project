@@ -1,8 +1,20 @@
+import logging
 import uuid
 from singleton import singleton
 from domain.asset.repo import AssetRepo
 from domain.user.persistence_interface import UserPersistenceInterface
 from domain.user.user import User
+
+
+class UserIDNotFound(Exception):
+    pass
+
+
+logging.basicConfig(
+    filename="finance.log",
+    level=logging.DEBUG,
+    format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
+)
 
 
 @singleton
@@ -29,11 +41,15 @@ class UserRepo:
     def delete_by_id(self, user_id: User.id):
         self.check_users_not_none()
         self.__persistence.delete_by_id(user_id)
-        for u in self.__users:
-            if user_id == u.id:
-                self.__users.remove(u)
-        self.__users = None
-        self.check_users_not_none()
+        if str(user_id) not in [str(u.id) for u in self.__users]:
+            raise UserIDNotFound("The specified user ID does not exist.")
+        else:
+            for u in self.__users:
+                if user_id == u.id:
+                    self.__users.remove(u)
+            self.__users = None
+            self.check_users_not_none()
+        logging.info(f"The user with ID {user_id} was deleted.")
 
     def get_all(self) -> list[User]:
         self.check_users_not_none()

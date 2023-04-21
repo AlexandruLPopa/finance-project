@@ -1,4 +1,5 @@
 import uuid
+from fastapi import FastAPI
 from domain.user.user import User
 
 

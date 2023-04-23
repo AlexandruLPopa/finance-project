@@ -38,7 +38,7 @@ class UserPersistenceSqlite(UserPersistenceInterface):
                 )
             conn.commit()
 
-    def delete_by_id(self, user_id: User.id):
+    def delete(self, user_id: User.id):
         with sqlite3.connect("main_users.db") as conn:
             cursor = conn.cursor()
             try:
@@ -47,7 +47,7 @@ class UserPersistenceSqlite(UserPersistenceInterface):
                 raise e
             conn.commit()
 
-    def edit_by_id(self, user_id: User.id, username: str):
+    def edit(self, user_id: User.id, username: str):
         with sqlite3.connect("main_users.db") as conn:
             cursor = conn.cursor()
             try:

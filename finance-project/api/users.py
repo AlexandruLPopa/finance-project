@@ -81,13 +81,13 @@ def create_a_user(new_user: UserAdd, repo=Depends(get_user_repo)):
 # DONE delete a user, DELETE /users/{user_id}
 @users_router.delete("/{user_id}")
 def delete_a_user(user_id: str, repo=Depends(get_user_repo)):
-    repo.delete_by_id(user_id)
+    repo.delete(user_id)
 
 
 # DONE probably add edit user by id
 @users_router.put("/{user_id}", response_model=UserInfo)
-def edit_by_id(user_id: str, username: str, repo=Depends(get_user_repo)):
-    repo.edit_by_id(user_id, username)
+def edit_user(user_id: str, username: str, repo=Depends(get_user_repo)):
+    repo.edit(user_id, username)
     return repo.get_by_id(user_id)
 
 

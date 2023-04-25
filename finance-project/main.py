@@ -23,7 +23,7 @@ app = FastAPI(
     # TODO add to README
     description="A webserver with a REST API for keeping track of your different financial assets,"
     " stocks & crypto, and see/compare their evolution",
-    version="0.3.0",
+    version="0.4.0",
 )
 app.include_router(users_router)
 app.include_router(assets_router)

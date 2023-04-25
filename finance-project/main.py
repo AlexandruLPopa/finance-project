@@ -11,10 +11,10 @@ from domain.user.factory import InvalidUsername
 from domain.user.repo import UserIDNotFound
 
 logging.basicConfig(
-    filename="finance.log",
-    level=logging.DEBUG,
-    format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
-)
+        filename="finance.log",
+        level=logging.DEBUG,
+        format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
+    )
 
 
 app = FastAPI(
@@ -23,7 +23,7 @@ app = FastAPI(
     # TODO add to README
     description="A webserver with a REST API for keeping track of your different financial assets,"
     " stocks & crypto, and see/compare their evolution",
-    version="0.4.0",
+    version="0.4.1",
 )
 app.include_router(users_router)
 app.include_router(assets_router)

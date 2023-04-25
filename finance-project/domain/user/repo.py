@@ -5,16 +5,15 @@ from domain.asset.repo import AssetRepo
 from domain.user.persistence_interface import UserPersistenceInterface
 from domain.user.user import User
 
+logging.basicConfig(
+        filename="finance.log",
+        level=logging.DEBUG,
+        format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
+    )
+
 
 class UserIDNotFound(Exception):
     pass
-
-
-logging.basicConfig(
-    filename="finance.log",
-    level=logging.DEBUG,
-    format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
-)
 
 
 @singleton
@@ -28,6 +27,7 @@ class UserRepo:
         self.__persistence.add(new_user)
         self.__users = None
         self.check_users_not_none()
+        logging.info(f"The user {new_user.username} was successfully created.")
 
     def edit(self, user_id: User.id, username: str):
         self.check_users_not_none()
@@ -36,8 +36,6 @@ class UserRepo:
             if user_id == u.id:
                 u.username = username
         self.__persistence.edit(user_id, username)
-        self.__users = None
-        self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was changed to {username}.")
 
     def delete(self, user_id: User.id):
@@ -47,8 +45,6 @@ class UserRepo:
             if user_id == u.id:
                 self.__users.remove(u)
         self.__persistence.delete(user_id)
-        self.__users = None
-        self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was deleted.")
 
     def get_all(self) -> list[User]:

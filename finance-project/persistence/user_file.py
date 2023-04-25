@@ -4,7 +4,6 @@ import uuid
 
 from domain.user.factory import UserFactory
 from domain.user.persistence_interface import UserPersistenceInterface
-from domain.user.repo import UserIDNotFound
 from domain.user.user import User
 
 

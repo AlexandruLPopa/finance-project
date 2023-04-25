@@ -31,28 +31,24 @@ class UserRepo:
 
     def edit(self, user_id: User.id, username: str):
         self.check_users_not_none()
-        if str(user_id) not in [str(u.id) for u in self.__users]:
-            raise UserIDNotFound("The specified user ID does not exist.")
-        else:
-            for u in self.__users:
-                if user_id == u.id:
-                    u.username = username
-            self.__persistence.edit(user_id, username)
-            self.__users = None
-            self.check_users_not_none()
+        self.check_id_exists(user_id)
+        for u in self.__users:
+            if user_id == u.id:
+                u.username = username
+        self.__persistence.edit(user_id, username)
+        self.__users = None
+        self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was changed to {username}.")
 
     def delete(self, user_id: User.id):
         self.check_users_not_none()
-        if str(user_id) not in [str(u.id) for u in self.__users]:
-            raise UserIDNotFound("The specified user ID does not exist.")
-        else:
-            for u in self.__users:
-                if user_id == u.id:
-                    self.__users.remove(u)
-            self.__persistence.delete(user_id)
-            self.__users = None
-            self.check_users_not_none()
+        self.check_id_exists(user_id)
+        for u in self.__users:
+            if user_id == u.id:
+                self.__users.remove(u)
+        self.__persistence.delete(user_id)
+        self.__users = None
+        self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was deleted.")
 
     def get_all(self) -> list[User]:
@@ -67,6 +63,7 @@ class UserRepo:
 
     def get_by_id(self, user_id) -> User:
         self.check_users_not_none()
+        self.check_id_exists(user_id)
         for u in self.__users:
             if u.id == uuid.UUID(hex=user_id):
                 assets = AssetRepo().get_for_user(u)
@@ -75,3 +72,8 @@ class UserRepo:
     def check_users_not_none(self):
         if self.__users is None:
             self.__users = self.__persistence.get_all()
+
+    def check_id_exists(self, user_id):
+        if str(user_id) not in [str(u.id) for u in self.__users]:
+            logging.error(msg="The specified user ID does not exist.")
+            raise UserIDNotFound("The specified user ID does not exist.")

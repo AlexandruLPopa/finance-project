@@ -32,7 +32,7 @@ class UserPersistenceFile(UserPersistenceInterface):
         except FailedToWriteInPersistence as e:
             # DONE homework, log error
             logging.error("Could not read file, reason: " + str(e))
-            raise e
+            return []
 
     def add(self, user: User):
         current_users = self.get_all()

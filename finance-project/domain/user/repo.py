@@ -1,5 +1,7 @@
 import logging
 import uuid
+
+from domain.asset.asset_persistence_interface import AssetPersistenceInterface
 from singleton import singleton
 from domain.asset.repo import AssetRepo
 from domain.user.persistence_interface import UserPersistenceInterface
@@ -60,7 +62,7 @@ class UserRepo:
         self.check_id_exists(user_id)
         for u in self.__users:
             if u.id == uuid.UUID(hex=user_id):
-                assets = AssetRepo().get_for_user(u)
+                assets = AssetRepo(AssetPersistenceInterface()).get_for_user(u)
                 return User(uuid=u.id, username=u.username, stocks=assets)
 
     def check_users_not_none(self):

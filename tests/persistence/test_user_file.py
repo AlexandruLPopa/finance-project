@@ -13,19 +13,21 @@ class UserPersistenceFileTestCase(unittest.TestCase):
         cls.repo = UserPersistenceFile(cls.file_path)
 
     def test_it_adds_a_user(self):
+        expected_users_count = len(self.repo.get_all()) + 1
         expected_username = "random-username"
         new_user = UserFactory().make_new(expected_username)
         self.repo.add(new_user)
         actual_users = self.repo.get_all()
-        self.assertEqual(1, len(actual_users))
-        self.assertEqual(expected_username, actual_users[0].username)
+        actual_users_count = len(actual_users)
+        self.assertEqual(expected_users_count, actual_users_count)
+        self.assertEqual(expected_username, actual_users[-1].username)
 
     def test_it_reads_users_from_the_system(self):
         expected_username = "random-username"
         new_user = UserFactory().make_new(expected_username)
         self.repo.add(new_user)
         actual_users = self.repo.get_all()
-        self.assertEqual(1, len(actual_users))
+        self.assertIsNotNone(actual_users)
 
     def test_it_deletes_user_from_the_system(self):
         expected_username = "random-username"

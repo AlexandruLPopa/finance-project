@@ -36,6 +36,8 @@ class UserRepo:
             if user_id == u.id:
                 u.username = username
         self.__persistence.edit(user_id, username)
+        self.__users = None
+        self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was changed to {username}.")
 
     def delete(self, user_id: User.id):
@@ -45,17 +47,13 @@ class UserRepo:
             if user_id == u.id:
                 self.__users.remove(u)
         self.__persistence.delete(user_id)
+        self.__users = None
+        self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was deleted.")
 
     def get_all(self) -> list[User]:
         self.check_users_not_none()
         return self.__users
-
-    def get_by_username(self, username) -> User:
-        self.check_users_not_none()
-        for u in self.__users:
-            if u.username == username:
-                return u
 
     def get_by_id(self, user_id) -> User:
         self.check_users_not_none()

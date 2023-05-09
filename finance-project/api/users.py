@@ -8,7 +8,6 @@ from domain.user.factory import UserFactory
 from persistence.user_file import UserPersistenceFile
 from persistence.user_sqlite import UserPersistenceSqlite
 
-
 users_router = APIRouter(prefix="/users")
 
 
@@ -33,7 +32,6 @@ def get_user_repo() -> UserRepo:
     # user_persistence = UserPersistenceFile("main_users.json")
     # user_persistence = UserPersistenceSqlite()
     return UserRepo(user_persistence)
-
 
 
 # Homework 1 for Project
@@ -66,9 +64,9 @@ def get_user_by_id(user_id: str, repo=Depends(get_user_repo)):
     return repo.get_by_id(user_id)
 
 
-@users_router.get("/{username}", response_model=UserInfo)
-def get_user(username: str, repo=Depends(get_user_repo)):
-    return repo.get_by_username(username)
+# @users_router.get("/{username}", response_model=UserInfo)
+# def get_user(username: str, repo=Depends(get_user_repo)):
+#     return repo.get_by_username(username)
 
 
 @users_router.post("", response_model=UserInfo)

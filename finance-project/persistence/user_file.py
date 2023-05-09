@@ -64,14 +64,12 @@ class UserPersistenceFile(UserPersistenceInterface):
 
     def edit(self, user_id: User.id, username: str):
         current_users = self.get_all()
-        for user in current_users:
-            if user.id == uuid.UUID(hex=user_id):
-                user.username = username
-            users_info = [(str(u.id), u.username, u.stocks) for u in current_users]
-            users_json = json.dumps(users_info)
-            try:
-                with open(self.__file_path, "w") as f:
-                    f.write(users_json)
-            except FailedToWriteInPersistence as e:
-                logging.error("Could not write user info to persistence. Error: " + str(e))
-                raise e
+        updated_users = [(str(u.id), username, u.stocks) if u.id == uuid.UUID(hex=user_id)
+                         else (str(u.id), u.username, u.stocks) for u in current_users]
+        users_json = json.dumps(updated_users)
+        try:
+            with open(self.__file_path, "w") as f:
+                f.write(users_json)
+        except FailedToWriteInPersistence as e:
+            logging.error("Could not write user info to persistence. Error: " + str(e))
+            raise e

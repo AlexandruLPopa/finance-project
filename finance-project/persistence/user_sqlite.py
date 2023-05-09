@@ -12,7 +12,7 @@ logging.basicConfig(
 
 
 class UserPersistenceSqlite(UserPersistenceInterface):
-    def get_all(self) -> list[User]:
+    def get_all_users(self) -> list[User]:
         with sqlite3.connect("main_users.db") as conn:
             cursor = conn.cursor()
             # DONE homework try except return empty list if no db

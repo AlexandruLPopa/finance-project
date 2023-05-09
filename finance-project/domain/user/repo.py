@@ -53,7 +53,7 @@ class UserRepo:
         self.check_users_not_none()
         logging.info(f"The user with ID {user_id} was deleted.")
 
-    def get_all(self) -> list[User]:
+    def get_all_users(self) -> list[User]:
         self.check_users_not_none()
         return self.__users
 
@@ -62,12 +62,12 @@ class UserRepo:
         self.check_id_exists(user_id)
         for u in self.__users:
             if u.id == uuid.UUID(hex=user_id):
-                assets = AssetRepo(AssetPersistenceInterface()).get_for_user(u)
+                assets = AssetRepo(asset_persistence=AssetPersistenceInterface()).get_for_user(u)
                 return User(uuid=u.id, username=u.username, stocks=assets)
 
     def check_users_not_none(self):
         if self.__users is None:
-            self.__users = self.__persistence.get_all()
+            self.__users = self.__persistence.get_all_users()
 
     def check_id_exists(self, user_id):
         if str(user_id) not in [str(u.id) for u in self.__users]:

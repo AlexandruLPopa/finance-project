@@ -1,16 +1,3 @@
-import sqlite3
-
-from domain.asset.asset import Asset
-from domain.user.user import User
-
-# TODO homework
-# Refactor this class
-# extract the sqlite code from here to the persistence layer
-# also create a class which can save these assets in a file with the users -> interface
-# this code should have automated tests
-
-import logging
-import sqlite3
 from domain.asset.asset import Asset
 from domain.asset.asset_persistence_interface import AssetPersistenceInterface
 
@@ -24,25 +11,27 @@ from domain.user.user import User
 
 
 class AssetRepo:
-    def __init__(self, persistence: AssetPersistenceInterface):
-        self.__persistence = persistence
+    def __init__(self, asset_persistence: AssetPersistenceInterface):
+        self.__asset_persistence = asset_persistence
         self.__assets = None
 
     def add_to_user(self, user: User, asset: Asset):
+        self.__asset_persistence.add_to_user(user, asset)
+        self.__assets = None
         self.check_we_have_assets(user)
-        self.__persistence.add_to_user(user, asset)
-        self.__assets.append(asset)
 
     def get_for_user(self, user: User) -> list[Asset]:
         self.check_we_have_assets(user)
         return self.__assets
 
     def delete_for_user(self, user: User, asset: Asset):
-        self.__persistence.delete_for_user(user, asset)
+        self.__asset_persistence.delete_for_user(user, asset)
+        self.__assets = None
+        self.check_we_have_assets(user)
 
     def check_we_have_assets(self, user: User):
         if self.__assets is None:
-            self.__assets = self.__persistence.get_for_user(user)
+            self.__assets = self.__asset_persistence.get_for_user(user)
 
 #
 # class AssetRepo:

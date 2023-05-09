@@ -9,7 +9,7 @@ class UserPersistenceInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_all(self) -> list[User]:
+    def get_all_users(self) -> list[User]:
         pass
 
     # DONE homework: delete & edit

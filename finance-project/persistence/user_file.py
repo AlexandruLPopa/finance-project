@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import uuid
 
 from domain.user.factory import UserFactory
@@ -22,6 +23,8 @@ class UserPersistenceFile(UserPersistenceInterface):
         self.__file_path = file_path
 
     def get_all(self) -> list[User]:
+        if not os.path.exists(self.__file_path):
+            return []
         try:
             # DONE refactor with
             with open(self.__file_path) as file:

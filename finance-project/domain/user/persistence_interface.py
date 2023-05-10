@@ -24,7 +24,7 @@ class UserPersistenceInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def add_to_user(self, user_id: str, asset: Asset):
+    def add_to_user(self, user_id: str, ticker: str):
         pass
 
     @abc.abstractmethod
@@ -32,5 +32,5 @@ class UserPersistenceInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def delete_for_user(self, user_id: str, asset: Asset):
+    def delete_for_user(self, user_id: str, ticker: str):
         pass

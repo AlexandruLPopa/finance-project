@@ -10,10 +10,10 @@ from domain.user.persistence_interface import UserPersistenceInterface
 from domain.user.user import User
 
 logging.basicConfig(
-        filename="finance.log",
-        level=logging.DEBUG,
-        format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
-    )
+    filename="finance.log",
+    level=logging.DEBUG,
+    format="%(asctime)s _ %(levelname)s _ %(name)s _ %(message)s",
+)
 
 
 class FailedToAccessPersistence(Exception):
@@ -80,13 +80,16 @@ class UserPersistenceFile(UserPersistenceInterface):
         current_assets = self.get_for_user(user_id)
         current_assets.append(asset)
         current_users = self.get_all_users()
-        assets_info = [(x.ticker, x.units, x.name,
-                        x.country, x.current_price, x.currency,
+        assets_info = [(x.ticker, x.name, x.country, x.units, x.sector,
+                        x.current_price, x.currency,
                         x.closed_price, x.fifty_day_price,
                         x.today_low_price, x.today_high_price,
                         x.open_price, x.price_evolution) for x in current_assets]
-        updated_users = [[u.id, u.username, u.stocks] if user_id != u.id else
-                         [u.id, u.username, assets_info] for u in current_users]
+        updated_users = [[str(u.id), u.username, u.stocks] if str(user_id.id) != str(u.id) else
+                         [str(u.id), u.username, assets_info] for u in current_users]
+        print(f"{updated_users} updated users")
+        print(f"{assets_info} assets info")
+        print(user_id)
         assets_json = json.dumps(updated_users)
         try:
             with open(self.__file_path, "w") as f:
@@ -95,18 +98,27 @@ class UserPersistenceFile(UserPersistenceInterface):
             logging.warning("Could not write to file. Error: " + str(e))
 
     def get_for_user(self, user_id: str) -> list[Asset]:
-        if not os.path.exists(self.__file_path):
-            return []
         current_users = self.get_all_users()
-        user = [u for u in current_users if user_id == str(u.id)][0]
-        return user.stocks
+        user = [u for u in current_users if str(user_id.id) == str(u.id)][0]
+        print([user.id, user.username, user.stocks])
+        current_assets = []
+        for x in user.stocks:
+            current_assets.append(Asset(ticker=x[0],
+                                        nr=x[3],
+                                        name=x[1],
+                                        country=x[2],
+                                        sector=x[4]))
+        return current_assets
 
     def delete_for_user(self, user_id: str, asset: Asset):
+        current_users = self.get_all_users()
+        updated_users = [(str(u.id), u.username, u.stocks.remove(asset))
+                         if str(u.id) == str(user_id.id) and asset in u.stocks
+                         else (str(u.id), u.username, u.stocks) for u in current_users]
+        users_json = json.dumps(updated_users)
         try:
-            with open(self.__file_path, "r") as file:
-                assets_info = json.load(file)
-            factory = AssetFactory()
-            return [factory.make_new(x) for x in assets_info]
-        except Exception as e:
-            logging.warning("File could not be read. Error: " + str(e))
-            return []
+            with open(self.__file_path, "w") as f:
+                f.write(users_json)
+        except FailedToAccessPersistence as e:
+            logging.error("Could not write user info to persistence. Error: " + str(e))
+            raise e

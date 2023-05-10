@@ -57,37 +57,37 @@ class UserRepo:
         self.check_users_not_none()
         return self.__users
 
-    def get_by_id(self, user_id) -> User:
+    def get_by_id(self, user_id: User.id) -> User:
         self.check_users_not_none()
         self.check_id_exists(user_id)
         for u in self.__users:
-            if u.id == uuid.UUID(hex=user_id):
-                assets = AssetRepo(asset_persistence=AssetPersistenceInterface()).get_for_user(u)
-                return User(uuid=u.id, username=u.username, stocks=assets)
+            if str(u.id) == str(user_id):
+                stocks = self.__persistence.get_for_user(u)
+                return User(uuid=u.id, username=u.username, stocks=stocks)
 
     def check_users_not_none(self):
         if self.__users is None:
             self.__users = self.__persistence.get_all_users()
 
-    def check_id_exists(self, user_id):
+    def check_id_exists(self, user_id: str):
         if str(user_id) not in [str(u.id) for u in self.__users]:
             logging.error(msg="The specified user ID does not exist.")
             raise UserIDNotFound("The specified user ID does not exist.")
 
-    def add_to_user(self, user: User, asset: Asset):
-        self.__asset_persistence.add_to_user(user, asset)
+    def add_to_user(self, user_id: str, ticker: str):
+        self.__persistence.add_to_user(user_id, ticker)
         self.__stocks = None
-        self.check_we_have_assets(user)
+        self.check_we_have_assets(user_id)
 
-    def get_for_user(self, user: User) -> list[Asset]:
-        self.check_we_have_assets(user)
-        return self.__assets
+    def get_for_user(self, user_id: str) -> list[Asset]:
+        self.check_we_have_assets(user_id)
+        return self.__stocks
 
-    def delete_for_user(self, user: User, asset: Asset):
-        self.__asset_persistence.delete_for_user(user, asset)
+    def delete_for_user(self, user_id: str, ticker: str):
+        self.__persistence.delete_for_user(user_id, ticker)
         self.__stocks = None
-        self.check_we_have_assets(user)
+        self.check_we_have_assets(user_id)
 
-    def check_we_have_assets(self, user: User):
-        if self.__assets is None:
-            self.__stocks = self.__asset_persistence.get_for_user(user)
+    def check_we_have_assets(self, user_id: str):
+        if self.__stocks is None:
+            self.__stocks = self.__persistence.get_for_user(user_id)

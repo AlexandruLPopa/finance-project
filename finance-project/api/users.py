@@ -1,9 +1,7 @@
 import json
 from fastapi import APIRouter, Depends
 
-from domain.asset.asset_persistence_interface import AssetPersistenceInterface
 from domain.asset.factory import AssetFactory
-from domain.asset.repo import AssetRepo
 from domain.user.repo import UserRepo
 from api.models import UserAdd, UserInfo, AssetInfoUser, AssetAdd
 from domain.user.factory import UserFactory
@@ -103,5 +101,5 @@ def add_asset_to_user(user_id: str, asset: AssetAdd, repo=Depends(get_user_repo)
         user_id
     )  # TODO, check we have a user otherwise throw exception code 404
     # user.add_stock(new_asset)
-    AssetRepo(asset_persistence=AssetPersistenceInterface()).add_to_user(user, new_asset)
+    repo.add_to_user(user, new_asset)
     return new_asset

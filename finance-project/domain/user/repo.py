@@ -1,9 +1,8 @@
 import logging
 import uuid
 
-from domain.asset.asset_persistence_interface import AssetPersistenceInterface
+from domain.asset.asset import Asset
 from singleton import singleton
-from domain.asset.repo import AssetRepo
 from domain.user.persistence_interface import UserPersistenceInterface
 from domain.user.user import User
 
@@ -24,6 +23,7 @@ class UserRepo:
         print("Initializing user repo")
         self.__persistence = persistence
         self.__users = None
+        self.__stocks = []
 
     def add(self, new_user: User):
         self.__persistence.add(new_user)
@@ -73,3 +73,21 @@ class UserRepo:
         if str(user_id) not in [str(u.id) for u in self.__users]:
             logging.error(msg="The specified user ID does not exist.")
             raise UserIDNotFound("The specified user ID does not exist.")
+
+    def add_to_user(self, user: User, asset: Asset):
+        self.__asset_persistence.add_to_user(user, asset)
+        self.__stocks = None
+        self.check_we_have_assets(user)
+
+    def get_for_user(self, user: User) -> list[Asset]:
+        self.check_we_have_assets(user)
+        return self.__assets
+
+    def delete_for_user(self, user: User, asset: Asset):
+        self.__asset_persistence.delete_for_user(user, asset)
+        self.__stocks = None
+        self.check_we_have_assets(user)
+
+    def check_we_have_assets(self, user: User):
+        if self.__assets is None:
+            self.__stocks = self.__asset_persistence.get_for_user(user)

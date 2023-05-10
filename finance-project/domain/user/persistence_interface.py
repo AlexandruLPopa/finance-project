@@ -1,5 +1,6 @@
 import abc
 
+from domain.asset.asset import Asset
 from domain.user.user import User
 
 
@@ -20,4 +21,16 @@ class UserPersistenceInterface(abc.ABC):
 
     @abc.abstractmethod
     def delete(self, user_id: str):
+        pass
+
+    @abc.abstractmethod
+    def add_to_user(self, user_id: str, asset: Asset):
+        pass
+
+    @abc.abstractmethod
+    def get_for_user(self, user_id: str) -> list[Asset]:
+        pass
+
+    @abc.abstractmethod
+    def delete_for_user(self, user_id: str, asset: Asset):
         pass

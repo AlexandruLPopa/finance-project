@@ -1,10 +1,8 @@
 import json
 import logging
 import os
-import uuid
 
 from domain.asset.asset import Asset
-from domain.asset.factory import AssetFactory
 from domain.user.factory import UserFactory
 from domain.user.persistence_interface import UserPersistenceInterface
 from domain.user.user import User

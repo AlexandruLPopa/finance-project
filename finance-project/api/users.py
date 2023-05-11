@@ -48,7 +48,7 @@ def get_all_users(repo=Depends(get_user_repo)):
 
 
 # TODO homework, replace username with an id
-# when we create a user we should create a uuid for it
+# when we create a user we should create an uuid for it
 # when we return all the users, each user should have the id field
 # when we query a single user or delete a user we should pass the id
 

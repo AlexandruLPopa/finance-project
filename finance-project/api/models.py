@@ -26,7 +26,6 @@ class AssetInfoBase(BaseModelOrmTrue):
     name: str = Field(description="The company's full name.")
     country: str = Field(description="The company's headquarters country.")
     sector: str = Field(description="The company's main field of operations.")
-    units: float = Field(description="The amount of stock units.")
 
 
 class AssetInfoUser(AssetInfoBase):
